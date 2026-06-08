@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Logaritmos: Teoria + Prática + Certificado Final</title>
+    <!-- KaTeX CSS + JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+    <!-- html2canvas para gerar JPG -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.2s, color 0.2s; }
+        body {
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f1f5f9; color: #0f172a; padding: 20px; min-height: 100vh;
+        }
+        body.dark-mode { background: #0f172a; color: #e2e8f0; }
+        body.dark-mode .card-section, body.dark-mode .top-bar, body.dark-mode .rule-box,
+        body.dark-mode .example-card, body.dark-mode .exercise-card, body.dark-mode .modal-content,
+        body.dark-mode .theory-panel, body.dark-mode .cert-panel {
+            background: #1e293b; color: #f1f5f9; border-color: #334155;
+        }
+        body.dark-mode .exercise-question { background: #334155; color: #facc15; }
+        body.dark-mode .user-answer { background: #0f172a; color: white; border-color: #475569; }
+        body.dark-mode button { background: #3b82f6; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .top-bar {
+            background: white; border-radius: 32px; padding: 16px 24px;
+            display: flex; flex-wrap: wrap; justify-content: space-between;
+            align-items: center; gap: 16px; margin-bottom: 28px; box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+        }
+        h1 {
+            font-size: 1.6rem;
+            background: linear-gradient(120deg, #0f2b3d, #1e4a6e);
+            background-clip: text; -webkit-background-clip: text; color: transparent;
+        }
+        body.dark-mode h1 { background: linear-gradient(120deg, #facc15, #38bdf8); background-clip: text; -webkit-background-clip: text; color: transparent; }
+        .login-area {
+            display: flex; gap: 10px; background: #f0f4f9; padding: 6px 16px; border-radius: 60px;
+        }
+        body.dark-mode .login-area { background: #334155; }
+        .login-area input {
+            border: 1px solid #cbd5e1; border-radius: 40px; padding: 8px 14px; font-size: 0.9rem;
+        }
+        body.dark-mode .login-area input { background: #0f172a; color: white; border-color: #475569; }
+        button {
+            background: #1e4a6e; border: none; color: white; padding: 8px 18px;
+            border-radius: 40px; font-weight: 600; cursor: pointer;
+        }
+        .progress-badge {
+            background: #e2e8f0; border-radius: 40px; padding: 8px 20px; font-weight: bold;
+        }
+        .card-section {
+            background: white; border-radius: 28px; padding: 24px; margin-bottom: 32px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        }
+        .section-title {
+            font-size: 1.7rem; margin-bottom: 16px; border-left: 7px solid #1e4a6e; padding-left: 20px;
+        }
+        .rule-box {
+            background: #f8fafc; border-radius: 24px; padding: 20px; margin: 20px 0; border: 1px solid #cbd5e1;
+        }
+        .grid-exercises {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; margin-top: 20px;
+        }
+        .exercise-card {
+            background: #f8fafc; border-radius: 20px; padding: 14px; border: 1px solid #e2e8f0;
+        }
+        .exercise-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+        }
+        .exercise-question {
+            font-weight: 700; background: #e2e8f0; display: inline-block; padding: 4px 12px;
+            border-radius: 30px; font-family: monospace; font-size: 1rem;
+        }
+        .hint-btn {
+            background: #f59e0b; color: white; border: none; border-radius: 30px;
+            padding: 4px 12px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;
+        }
+        .answer-status { display: flex; gap: 8px; margin-top: 10px; }
+        .user-answer { flex: 1; padding: 8px 12px; border-radius: 40px; border: 1px solid #cbd5e1; }
+        .feedback { font-size: 0.75rem; margin-top: 8px; }
+        .correct-feedback { color: #15803d; }
+        .wrong-feedback { color: #b91c1c; }
+        .dashboard {
+            background: #0f172a; color: white; border-radius: 28px; padding: 18px 24px;
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;
+        }
+        .stats { display: flex; gap: 20px; flex-wrap: wrap; }
+        .stat-item { background: #1e293b; padding: 6px 18px; border-radius: 40px; }
+        .cert-panel {
+            background: white; border-radius: 28px; padding: 20px; margin-top: 20px; text-align: center;
+        }
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
+            visibility: hidden; opacity: 0;
+        }
+        .modal-content {
+            background: white; max-width: 600px; width: 90%; border-radius: 32px; padding: 28px;
+            max-height: 85vh; overflow-y: auto;
+        }
+        .certificate-box {
+            background: #fef9e3; padding: 20px; border-radius: 24px; text-align: center;
+            margin: 20px 0;
+        }
+        .certificate-box.dark-cert {
+            background: #2d3748; color: white;
+        }
+        @media (max-width: 700px) {
+            .top-bar { flex-direction: column; align-items: stretch; }
+            .grid-exercises { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="top-bar">
+        <h1>🔢 Logaritmos: Domínio total</h1>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button id="darkModeToggle">🌓 Modo escuro</button>
+            <div class="login-area">
+                <input type="text" id="studentName" placeholder="Seu nome">
+                <button id="loginBtn">Salvar</button>
+            </div>
+            <div class="progress-badge" id="globalProgress">📈 0%</div>
+        </div>
+    </div>
+
+    <!-- ENUNCIADO ORIGINAL + TEORIA RÁPIDA -->
+    <div class="card-section">
+        <div class="section-title">📘 1) Calcule os logaritmos a seguir:</div>
+        <div id="exercises1" class="grid-exercises"></div>
+    </div>
+
+    <div class="card-section">
+        <div class="section-title">📊 2) Sabendo que $\log 2 = 0,3$ ; $\log 3 = 0,48$ ; $\log 5 = 0,69$ (base 10), calcule:</div>
+        <div id="exercises2" class="grid-exercises"></div>
+    </div>
+
+    <div class="card-section">
+        <div class="section-title">🔢 3) Sabendo que $\log 20 = 1,3$ ; $\log 30 = 1,48$ ; $\log 50 = 1,69$, calcule:</div>
+        <div id="exercises3" class="grid-exercises"></div>
+    </div>
+
+    <!-- TEORIA MUDANÇA DE BASE -->
+    <div class="card-section">
+        <div class="section-title">🔄 Mudança de Base (teoria + exercícios)</div>
+        <div class="rule-box">
+            <p>Fórmula: $\log_a b = \frac{\log_{10} b}{\log_{10} a}$. Exemplo: $\log_2 5 = \frac{0,69}{0,3} = 2,3$.</p>
+            <p>Para base fracionária: $\log_{1/2} x = \frac{\log x}{-\log 2}$.</p>
+        </div>
+        <div id="exercises4" class="grid-exercises"></div>
+    </div>
+
+    <div class="dashboard">
+        <div class="stats">
+            <div class="stat-item">✅ Acertos: <span id="totalCorrect">0</span></div>
+            <div class="stat-item">📋 Total: <span id="totalQuestions">0</span></div>
+            <div class="stat-item">🏆 Vitórias: <span id="victoryCount">0</span></div>
+        </div>
+        <button id="resetAllBtn" class="reset-btn">🔄 Resetar tudo</button>
+        <button id="showCertBtn" style="background: #2b6e4b;">📜 Ver Certificado</button>
+    </div>
+</div>
+
+<!-- Modal do Certificado -->
+<div id="certModal" class="modal">
+    <div class="modal-content" id="certModalContent">
+        <h2>🏅 Certificado de Desempenho</h2>
+        <div id="certificateInner" style="margin: 20px 0;"></div>
+        <label>📝 Quantas dicas você utilizou? <input type="number" id="tipsUsed" min="0" max="100" value="0" style="width:70px;"></label>
+        <div style="display: flex; gap: 12px; margin-top: 20px; justify-content: center;">
+            <button id="downloadJpgBtn">📸 Baixar JPG</button>
+            <button id="downloadPdfBtn">📄 Baixar PDF</button>
+            <button class="close-modal" id="closeCertBtn">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ================== DADOS DOS EXERCÍCIOS (CORRIGIDOS) ==================
+    const sec1 = [
+        { id:"1a", text:"\\log_{2} 16", ans:4, hint:"2⁴ = 16 → 4", tip:"Pergunte: 2 elevado a quanto dá 16? Potência direta." },
+        { id:"1b", text:"\\log_{3} 81", ans:4, hint:"3⁴ = 81 → 4", tip:"81 = 3⁴" },
+        { id:"1c", text:"\\log_{5} 125", ans:3, hint:"5³ = 125 → 3", tip:"125 = 5³" },
+        { id:"1d", text:"\\log_{6} 1296", ans:4, hint:"6⁴ = 1296 → 4", tip:"1296 = 6⁴" },
+        { id:"1e", text:"\\log_{12} 1728", ans:3, hint:"12³ = 1728 → 3", tip:"1728 = 12³" },
+        { id:"1f", text:"\\log_{2} 4096", ans:12, hint:"2¹² = 4096 → 12", tip:"4096 = 2¹²" },
+        { id:"1g", text:"\\log_{28} 1", ans:0, hint:"logₐ 1 = 0", tip:"Qualquer log de 1 é zero." },
+        { id:"1h", text:"\\log_{5} 625", ans:4, hint:"5⁴ = 625 → 4", tip:"625 = 5⁴" },
+        { id:"1i", text:"\\log_{2} \\sqrt{2}", ans:0.5, hint:"√2 = 2^{1/2} → 1/2", tip:"Use expoente fracionário: √2 = 2^{0,5}" },
+        { id:"1j", text:"\\log 100", ans:2, hint:"10² = 100 → 2", tip:"log sem base = base 10" },
+        { id:"1k", text:"\\log_{2} 1024", ans:10, hint:"2¹⁰ = 1024 → 10", tip:"1024 = 2¹⁰" },
+        { id:"1l", text:"\\log_{\\pi} \\pi", ans:1, hint:"logₐ a = 1", tip:"Base = argumento → 1" },
+        { id:"1m", text:"\\log_{4} 16", ans:2, hint:"4² = 16 → 2", tip:"4² = 16" },
+        { id:"1n", text:"\\log_{3} \\left(\\frac{1}{9}\\right)", ans:-2, hint:"3⁻² = 1/9 → -2", tip:"Expoente negativo: 1/9 = 3^{-2}" },
+        { id:"1o", text:"\\log_{81} 3", ans:0.25, hint:"81^{1/4}=3 → 1/4", tip:"81 = 3⁴, então log_{81}3 = 1/4" },
+        { id:"1p", text:"\\log_{\\frac{1}{2}} 8", ans:-3, hint:"(1/2)⁻³ = 8 → -3", tip:"Base entre 0 e 1: log fica negativo" },
+        { id:"1q", text:"\\log_{7} \\left(\\frac{1}{7}\\right)", ans:-1, hint:"7⁻¹ = 1/7 → -1", tip:"Inverso da base" },
+        { id:"1r", text:"\\log_{125} 5", ans:1/3, hint:"125^{1/3}=5 → 1/3 ≈ 0,333", tip:"125 = 5³, então log = 1/3" },
+        { id:"1s", text:"\\log_{\\frac{1}{2}} 32", ans:-5, hint:"(1/2)⁻⁵ = 32 → -5", tip:"32 = 2⁵, base 1/2 → expoente -5" },
+        { id:"1t", text:"\\log_{9} \\left(\\frac{1}{27}\\right)", ans:-1.5, hint:"9^{-1.5}=1/27 → -1,5", tip:"1/27 = 3^{-3}, 9 = 3² → expoente -3/2 = -1,5" },
+        { id:"1u", text:"\\log_{27} 81", ans:4/3, hint:"27^{4/3}=81 → 1,333", tip:"27=3³, 81=3⁴ → 4/3" },
+        { id:"1v", text:"\\log_{\\sqrt{8}} \\sqrt{32}", ans:5/3, hint:"(5/2)/(3/2)=5/3≈1,667", tip:"Escreva como potências de 2" }
+    ];
+
+    const sec2 = [
+        { id:"2a", text:"\\log 4", ans:0.6, hint:"2·0,3 = 0,6", tip:"log4 = log(2²) = 2·log2" },
+        { id:"2b", text:"\\log \\left(\\frac{2}{5}\\right)", ans:-0.39, hint:"0,3 - 0,69 = -0,39", tip:"log(a/b) = log a - log b" },
+        { id:"2c", text:"\\log 12", ans:1.08, hint:"log3 + log4 = 0,48+0,6 = 1,08", tip:"12 = 3·4" },
+        { id:"2d", text:"\\log 25", ans:1.38, hint:"2·0,69 = 1,38", tip:"25 = 5²" },
+        { id:"2e", text:"\\log \\sqrt{2}", ans:0.15, hint:"0,5·0,3 = 0,15", tip:"√2 = 2^{1/2}" },
+        { id:"2f", text:"\\log 0,5", ans:-0.3, hint:"log(1/2) = -0,3", tip:"0,5 = 1/2" },
+        { id:"2g", text:"\\log \\left(\\frac{3}{2}\\right)", ans:0.18, hint:"0,48-0,3 = 0,18", tip:"log3 - log2" },
+        { id:"2h", text:"\\log 20", ans:1.3, hint:"log2 + log10 = 0,3+1 = 1,3", tip:"20 = 2·10" },
+        { id:"2i", text:"\\log_{2} 3", ans:1.6, hint:"0,48/0,3 = 1,6", tip:"Mudança de base: log3/log2" },
+        { id:"2j", text:"\\log 20 + \\log 40 + \\log 1600", ans:6.104, hint:"1,3+1,6+3,204=6,104", tip:"Soma de logs = log do produto" },
+        { id:"2k", text:"\\log 30", ans:1.48, hint:"log3 + log10 = 0,48+1 = 1,48", tip:"30 = 3·10" },
+        { id:"2l", text:"\\log 32", ans:1.5, hint:"5·0,3 = 1,5", tip:"32 = 2⁵" },
+        { id:"2m", text:"\\log \\left(\\frac{10}{9}\\right)", ans:0.0458, hint:"1 - 0,96 = 0,04", tip:"log10 - log9 = 1 - 2·0,48" },
+        { id:"2n", text:"\\log 10", ans:1, hint:"base 10", tip:"log10 = 1" },
+        { id:"2o", text:"\\log_{2} 5", ans:2.3, hint:"0,69/0,3 = 2,3", tip:"log5/log2" },
+        { id:"2p", text:"\\log 30 + \\log 90", ans:3.44, hint:"1,48 + 1,96 = 3,44", tip:"log(30·90) = log2700" },
+        { id:"2q", text:"\\log \\sqrt{5}", ans:0.345, hint:"0,5·0,69 = 0,345", tip:"√5 = 5^{1/2}" },
+        { id:"2r", text:"\\log 15", ans:1.17, hint:"0,48+0,69=1,17", tip:"15 = 3·5" },
+        { id:"2s", text:"\\log_{3} 5", ans:1.4375, hint:"0,69/0,48=1,4375", tip:"log5/log3" },
+        { id:"2t", text:"\\log 50 - \\log 250", ans:-0.699, hint:"log(0,2) = -0,7", tip:"log(50/250) = log(0,2)" },
+        { id:"2u", text:"\\log \\left(\\frac{32}{15}\\right)", ans:0.329, hint:"1,5 - 1,171 = 0,329", tip:"log32 - log15" },
+        { id:"2v", text:"\\log \\sqrt{6}", ans:0.39, hint:"(0,3+0,48)/2 = 0,39", tip:"(log2+log3)/2" }
+    ];
+
+    const sec3 = [
+        { id:"3a", text:"\\log 4 + \\log 5", ans:1.3, hint:"log20 = 1,3", tip:"log(4·5)=log20" },
+        { id:"3b", text:"\\log 5 + \\log 6", ans:1.48, hint:"log30 = 1,48", tip:"log(5·6)=log30" },
+        { id:"3c", text:"\\log 150 - \\log 5", ans:1.48, hint:"log30 = 1,48", tip:"log(150/5)=log30" },
+        { id:"3d", text:"\\log 120 - \\log 6", ans:1.3, hint:"log20 = 1,3", tip:"log(120/6)=log20" },
+        { id:"3e", text:"\\log 5 + \\log 12", ans:1.78, hint:"log60 = 1,78", tip:"log(5·12)=log60" },
+        { id:"3f", text:"\\log 180 - \\log 9", ans:1.3, hint:"log20 = 1,3", tip:"log(180/9)=log20" },
+        { id:"3g", text:"\\log 16 + 2\\log 5", ans:2.6, hint:"log(16·25)=log400=2,6", tip:"2log5 = log25" },
+        { id:"3h", text:"\\log 600 - \\log 30", ans:1.3, hint:"log20 = 1,3", tip:"log(600/30)=log20" },
+        { id:"3i", text:"2\\log 15 + \\log 4", ans:2.96, hint:"log(225·4)=log900=2·1,48=2,96", tip:"2log15 = log225" },
+        { id:"3j", text:"\\log 1800 - \\log 60", ans:1.48, hint:"log30 = 1,48", tip:"log(1800/60)=log30" },
+        { id:"3k", text:"\\log 225 + 2\\log 4", ans:3.56, hint:"log(225·16)=log3600=3,56", tip:"2log4 = log16" },
+        { id:"3l", text:"\\log 1200 - \\log 20", ans:1.78, hint:"log60 = 1,78", tip:"log(1200/20)=log60" },
+        { id:"3m", text:"\\log 15 + \\log 40", ans:2.78, hint:"log600 = 2,78", tip:"log(15·40)=log600" },
+        { id:"3n", text:"\\log 1800 - \\log 30", ans:1.78, hint:"log60 = 1,78", tip:"log(1800/30)=log60" },
+        { id:"3o", text:"\\log 20 + \\log 45", ans:2.96, hint:"log900 = 2,96", tip:"log(20·45)=log900" },
+        { id:"3p", text:"\\log 6000 - \\log 30", ans:2.3, hint:"log200 = 2,3", tip:"log(6000/30)=log200" }
+    ];
+
+    const sec4 = [
+        { id:"4a", text:"\\log_{3} 7", ans:1.760, hint:"log7/log3 = 0,845/0,48 ≈ 1,76", tip:"Use calculadora: log7 ≈ 0,845" },
+        { id:"4b", text:"\\log_{5} 2", ans:0.435, hint:"0,3/0,69 ≈ 0,435", tip:"log2/log5" },
+        { id:"4c", text:"\\log_{2} 10", ans:3.333, hint:"1/0,3 ≈ 3,333", tip:"log10 = 1" },
+        { id:"4d", text:"\\log_{7} 5", ans:0.817, hint:"0,69/0,845 ≈ 0,817", tip:"log5/log7" },
+        { id:"4e", text:"\\log_{4} 9", ans:1.6, hint:"(2·0,48)/(2·0,3)=1,6", tip:"log9/log4 = (2log3)/(2log2)" },
+        { id:"4f", text:"\\log_{10} 3", ans:0.48, hint:"dado", tip:"log3 = 0,48" },
+        { id:"4g", text:"\\log_{3} 20", ans:2.708, hint:"1,3/0,48 ≈ 2,708", tip:"log20/log3" },
+        { id:"4h", text:"\\log_{8} 32", ans:1.667, hint:"1,5/0,9 = 1,667", tip:"log32=1,5; log8=0,9" },
+        { id:"4i", text:"\\log_{\\frac{1}{2}} 10", ans:-3.333, hint:"1 / (-0,3) = -3,333", tip:"log(1/2) = -log2" },
+        { id:"4j", text:"\\log_{\\sqrt{2}} 8", ans:6, hint:"3 / 0,5 = 6", tip:"√2 = 2^{0,5}" }
+    ];
+
+    const allExercises = [...sec1, ...sec2, ...sec3, ...sec4];
+    let progress = JSON.parse(localStorage.getItem('logProgressFull')) || {};
+    let student = localStorage.getItem('logStudentFull') || 'convidado';
+    document.getElementById('studentName').value = student;
+
+    function saveAll() {
+        localStorage.setItem('logProgressFull', JSON.stringify(progress));
+        localStorage.setItem('logStudentFull', student);
+        updateDashboard();
+    }
+
+    function normalizeAnswer(val) {
+        let str = val.toString().trim().replace(',', '.');
+        if (str.includes('/')) {
+            let frac = str.split('/');
+            if (frac.length === 2) {
+                let num = parseFloat(frac[0]), den = parseFloat(frac[1]);
+                if (!isNaN(num) && !isNaN(den) && den !== 0) return num / den;
+            }
+        }
+        let num = parseFloat(str);
+        return isNaN(num) ? null : num;
+    }
+
+    function checkAnswer(ex, inputVal) {
+        let userNum = normalizeAnswer(inputVal);
+        if (userNum === null) return false;
+        let expectedNum = (typeof ex.ans === 'number') ? ex.ans : parseFloat(ex.ans);
+        if (isNaN(expectedNum)) return false;
+        return Math.abs(userNum - expectedNum) < 0.01;
+    }
+
+    function updateDashboard() {
+        const total = allExercises.length;
+        const correct = Object.values(progress).filter(v=>v===true).length;
+        const percent = Math.floor((correct/total)*100);
+        document.getElementById('totalCorrect').innerText = correct;
+        document.getElementById('totalQuestions').innerText = total;
+        document.getElementById('globalProgress').innerHTML = `📈 ${percent}% (${correct}/${total})`;
+        document.getElementById('victoryCount').innerText = Math.floor(correct/10);
+    }
+
+    function renderSection(containerId, exercises) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        exercises.forEach(ex => {
+            const card = document.createElement('div');
+            card.className = 'exercise-card';
+            const isCorrect = progress[ex.id] === true;
+            card.innerHTML = `
+                <div class="exercise-header">
+                    <div class="exercise-question">$${ex.text}$</div>
+                    <button class="hint-btn" data-id="${ex.id}">💡 Dica</button>
+                </div>
+                <div class="answer-status">
+                    <input type="text" class="user-answer" placeholder="resposta" id="inp-${ex.id}" value="">
+                    <button class="check-btn" data-id="${ex.id}">✓</button>
+                </div>
+                <div class="feedback" id="fb-${ex.id}">${isCorrect ? '✅ Correta!' : '⚡ Aguarde'}</div>
+            `;
+            const inp = card.querySelector('.user-answer');
+            const btn = card.querySelector('.check-btn');
+            const fb = card.querySelector('.feedback');
+            const hintBtn = card.querySelector('.hint-btn');
+            if (isCorrect) { fb.innerHTML = '✅ Correta!'; fb.className = 'feedback correct-feedback'; }
+            
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                let ok = checkAnswer(ex, inp.value);
+                if (ok) progress[ex.id] = true;
+                else if (!progress[ex.id]) progress[ex.id] = false;
+                saveAll();
+                fb.innerHTML = ok ? '✅ Correta!' : '❌ Incorreta. Tente novamente!';
+                fb.className = ok ? 'feedback correct-feedback' : 'feedback wrong-feedback';
+            });
+            hintBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                alert(`🔍 Dica: ${ex.tip || ex.hint}`);
+            });
+            container.appendChild(card);
+        });
+    }
+
+    function renderAll() {
+        renderSection('exercises1', sec1);
+        renderSection('exercises2', sec2);
+        renderSection('exercises3', sec3);
+        renderSection('exercises4', sec4);
+    }
+
+    // ========== CERTIFICADO ==========
+    function showCertificate() {
+        const correctCount = Object.values(progress).filter(v=>v===true).length;
+        const total = allExercises.length;
+        const percent = Math.round((correctCount/total)*100);
+        const studentName = student || "Aluno";
+        const modal = document.getElementById('certModal');
+        const certInner = document.getElementById('certificateInner');
+        const tipsInput = document.getElementById('tipsUsed');
+        tipsInput.value = 0;
+        function updateCertHTML() {
+            const tips = tipsInput.value;
+            certInner.innerHTML = `
+                <div class="certificate-box" id="certBox">
+                    <h3>🏆 Certificado de Conclusão 🏆</h3>
+                    <p><strong>Nome:</strong> ${studentName}</p>
+                    <p><strong>Acertos:</strong> ${correctCount} / ${total} (${percent}%)</p>
+                    <p><strong>Dicas utilizadas:</strong> ${tips}</p>
+                    <p><strong>Data:</strong> ${new Date().toLocaleDateString()}</p>
+                    <p style="margin-top:20px;">Parabéns pelo esforço em dominar Logaritmos!</p>
+                </div>
+            `;
+            if (document.body.classList.contains('dark-mode')) {
+                document.getElementById('certBox')?.classList.add('dark-cert');
+            } else {
+                document.getElementById('certBox')?.classList.remove('dark-cert');
+            }
+        }
+        tipsInput.oninput = updateCertHTML;
+        updateCertHTML();
+        modal.style.visibility = 'visible';
+        modal.style.opacity = '1';
+    }
+
+    document.getElementById('showCertBtn').addEventListener('click', showCertificate);
+    document.getElementById('closeCertBtn').addEventListener('click', () => {
+        document.getElementById('certModal').style.visibility = 'hidden';
+    });
+    document.getElementById('downloadJpgBtn').addEventListener('click', async () => {
+        const certDiv = document.getElementById('certificateInner');
+        const originalBg = certDiv.style.backgroundColor;
+        certDiv.style.backgroundColor = document.body.classList.contains('dark-mode') ? '#1e293b' : '#fef9e3';
+        try {
+            const canvas = await html2canvas(certDiv, { scale: 2, backgroundColor: null });
+            const link = document.createElement('a');
+            link.download = `certificado_${student}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg');
+            link.click();
+        } catch(err) { alert("Erro ao gerar imagem: "+err); }
+        certDiv.style.backgroundColor = originalBg;
+    });
+    document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+        const originalTitle = document.title;
+        document.title = `Certificado_${student}`;
+        const printContents = document.getElementById('certificateInner').innerHTML;
+        const win = window.open();
+        win.document.write(`
+            <html><head><title>Certificado</title>
+            <style>body { font-family: sans-serif; padding: 40px; } .certificate-box { border: 2px solid gold; padding: 20px; text-align:center; }</style>
+            </head><body>${printContents}</body></html>
+        `);
+        win.document.close();
+        win.print();
+        document.title = originalTitle;
+    });
+
+    // Eventos gerais
+    document.getElementById('loginBtn').addEventListener('click', () => {
+        let name = document.getElementById('studentName').value.trim();
+        if (name) student = name; else student = 'convidado';
+        saveAll();
+        alert(`Olá, ${student}! Progresso salvo.`);
+    });
+    document.getElementById('resetAllBtn').addEventListener('click', () => {
+        if (confirm('Resetar todo progresso?')) {
+            progress = {};
+            saveAll();
+            renderAll();
+        }
+    });
+    const darkToggle = document.getElementById('darkModeToggle');
+    if (localStorage.getItem('darkMode') === 'enabled') document.body.classList.add('dark-mode');
+    darkToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode') ? 'enabled' : 'disabled');
+    });
+    renderAll();
+    updateDashboard();
+    setTimeout(() => {
+        if (window.renderMathInElement) renderMathInElement(document.body, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}] });
+    }, 200);
+</script>
+</body>
+</html>
